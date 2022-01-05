@@ -1,27 +1,38 @@
-import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
-import AddProduct from "./components/AddProduct";
+import React, { useState } from "react";
+import "./App.css";
+import { BrowserRouter as Router, Link, Route } from "react-router-dom";
+import AddProduct from "./components/AddProduct.js";
 import ProductsList from "./components/ProductsList.js";
 import SingleProduct from "./components/SingleProduct.js";
-import "./App.css";
 
 const App = () => {
+    const [products, setProducts] = useState([]);
+
+    const addProduct = (product) => {
+        setProducts([...products, product]);
+    };
+
+    const deleteProduct = (index) => {
+        let updatedProducts = [...products];
+        updatedProducts = updatedProducts.slice(0, index).concat(updatedProducts.slice(index + 1, updatedProducts.length));
+        setProducts(updatedProducts);
+    };
+
     return (
-        <div>
-            <Router>
+        <Router>
+            <div id="app">
                 <aside>
                     <Link to={`/`}>Products</Link>
                     <Link to={`/add-product`}>Add product</Link>
                 </aside>
 
                 <main>
-                    <Routes>
-                        <Route exact path="/" component={ProductsList} />
-                        <Route path="/add-product" component={AddProduct} />
-                        <Route path="/product/:slug" component={SingleProduct} />
-                    </Routes>
+                    <Route exact path="/" render={() => <ProductsList products={products} deleteProduct={deleteProduct} />} />
+                    <Route path="/add-product" render={({ history }) => <AddProduct addProduct={addProduct} history={history} />} />
+                    <Route path="/product/:slug" component={SingleProduct} />
                 </main>
-            </Router>
-        </div>
+            </div>
+        </Router>
     );
 };
 
