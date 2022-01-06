@@ -27,9 +27,9 @@ const App = () => {
                 </aside>
 
                 <main>
-                    <Route exact path="/" render={() => <ProductsList products={products} deleteProduct={deleteProduct} />} />
+                    <Route exact path="/" render={({ history }) => <ProductsList products={products} deleteProduct={deleteProduct} history={history} />} />
                     <Route path="/add-product" render={({ history }) => <AddProduct addProduct={addProduct} history={history} />} />
-                    <Route path="/product/:slug" component={SingleProduct} />
+                    <Route path="/product/:slug" render={({ match }) => <SingleProduct product={products.find((p) => p.slug === match.params.slug)} />} />
                 </main>
             </div>
         </Router>
