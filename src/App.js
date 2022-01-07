@@ -4,9 +4,11 @@ import { BrowserRouter as Router, Link, Route } from "react-router-dom";
 import AddProduct from "./components/AddProduct.js";
 import ProductsList from "./components/ProductsList.js";
 import SingleProduct from "./components/SingleProduct.js";
+import Cart from "./components/Cart.js";
 
 const App = () => {
     const [products, setProducts] = useState([]);
+    const [cart, setCart] = useState([]);
 
     const addProduct = (product) => {
         setProducts([...products, product]);
@@ -18,6 +20,22 @@ const App = () => {
         setProducts(updatedProducts);
     };
 
+    const addToCart = ({ product, quantity }) => {
+        const index = cart.findIndex((itemInCart) => itemInCart.product.slug === product.slug);
+
+        let newCart = [];
+
+        if (index === -1) {
+            //not existing
+            newCart = [...cart, { product, quantity }];
+        } else {
+            quantity += cart[index].quantity;
+            newCart = cart.filter((item) => item.product.slug !== product.slug).concat({ product, quantity });
+        }
+
+        setCart(newCart);
+    };
+
     return (
         <Router>
             <div id="app">
@@ -27,9 +45,10 @@ const App = () => {
                 </aside>
 
                 <main>
+                    <Cart cart={cart} />
                     <Route exact path="/" render={({ history }) => <ProductsList products={products} deleteProduct={deleteProduct} history={history} />} />
                     <Route path="/add-product" render={({ history }) => <AddProduct addProduct={addProduct} history={history} />} />
-                    <Route path="/product/:slug" render={({ match }) => <SingleProduct product={products.find((p) => p.slug === match.params.slug)} />} />
+                    <Route path="/product/:slug" render={({ match }) => <SingleProduct product={products.find((p) => p.slug === match.params.slug)} addToCart={addToCart} />} />
                 </main>
             </div>
         </Router>
