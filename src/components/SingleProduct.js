@@ -5,6 +5,8 @@ export default (props) => {
         props.addToCart({ product: props.product, quantity: 1 });
     };
 
+    console.log(props.addToCart);
+
     return (
         <div className="single-product">
             <img src={props.product.image} />
